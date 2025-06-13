@@ -1,0 +1,42 @@
+@model LibraryBookManagement.Models.Book
+
+@{
+    ViewData["Title"] = "Book Details";
+}
+
+<h2>Book Details</h2>
+
+<div class="card p-3 shadow rounded">
+    <dl class="row">
+        <dt class="col-sm-3">Title</dt>
+        <dd class="col-sm-9">@Model.Title</dd>
+
+        <dt class="col-sm-3">Author</dt>
+        <dd class="col-sm-9">@Model.Author</dd>
+
+        <dt class="col-sm-3">ISBN</dt>
+        <dd class="col-sm-9">@Model.ISBN</dd>
+
+        <dt class="col-sm-3">Published Year</dt>
+        <dd class="col-sm-9">@Model.PublishedYear</dd>
+
+        <dt class="col-sm-3">Genre</dt>
+        <dd class="col-sm-9">@Model.Genre</dd>
+
+        <dt class="col-sm-3">Details</dt>
+        <dd class="col-sm-9">@Model.Detail</dd>
+
+        @if (Model.UpdatedOn != null)
+        {
+            <dt class="col-sm-3">Last Updated On</dt>
+            <dd class="col-sm-9">@Model.UpdatedOn.Value.ToString("dd MMM yyyy hh:mm tt")</dd>
+        }
+        else
+        {
+            <dt class="col-sm-3">Created On</dt>
+            <dd class="col-sm-9">@Model.CreatedOn.ToString("dd MMM yyyy hh:mm tt")</dd>
+        }
+    </dl>
+</div>
+
+<a class="btn btn-secondary mt-3" href="@Url.Action("Index")">Back to List</a>

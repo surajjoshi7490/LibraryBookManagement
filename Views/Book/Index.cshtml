@@ -1,0 +1,92 @@
+@model IEnumerable<LibraryBookManagement.Models.Book>
+@{
+    ViewData["Title"] = "Book List";
+    var currentSearch = Context.Request.Query["searchString"].ToString();
+    var currentSort = Context.Request.Query["sortOrder"].ToString();
+}
+
+<h2>📚 Book List</h2>
+
+<!-- ✅ Search and Sort Bar -->
+<form asp-action="Index" method="get" class="d-flex justify-content-between align-items-center mb-3 flex-wrap">
+    <div class="d-flex flex-wrap gap-2 mb-2">
+        <input type="text" name="searchString" class="form-control" placeholder="🔍 Search Title or Author"
+            value="@currentSearch" />
+        <button type="submit" class="btn btn-outline-primary">Filter</button>
+        @if (!string.IsNullOrEmpty(currentSearch))
+        {
+            <a asp-action="Index" class="btn btn-outline-secondary">Clear</a>
+        }
+    </div>
+
+    <div class="d-flex gap-2">
+    <select name="sortOrder" class="form-select" onchange="this.form.submit()">
+        @if ((ViewData["CurrentSort"] as string) == "")
+        {
+            <option value="" selected="selected">📅 Recently Added</option>
+        }
+        else
+        {
+            <option value="">📅 Recently Added</option>
+        }
+
+        @if ((ViewData["CurrentSort"] as string) == "title")
+        {
+            <option value="title" selected="selected">🔤 Title (A–Z)</option>
+        }
+        else
+        {
+            <option value="title">🔤 Title (A–Z)</option>
+        }
+
+        @if ((ViewData["CurrentSort"] as string) == "author")
+        {
+            <option value="author" selected="selected">✍️ Author (A–Z)</option>
+        }
+        else
+        {
+            <option value="author">✍️ Author (A–Z)</option>
+        }
+    </select>
+
+    <a asp-action="Create" class="btn btn-success">➕ Add New Book</a>
+</div>
+
+</form>
+
+<!-- ✅ No Results -->
+@if (!Model.Any())
+{
+    <div class="alert alert-danger">No books found for "<strong>@currentSearch</strong>"</div>
+}
+
+<!-- ✅ Book Table -->
+<table class="table table-bordered table-hover">
+    <thead class="table-dark">
+        <tr>
+            <th>Title</th>
+            <th>Author</th>
+            <th>ISBN</th>
+            <th>Published Year</th>
+            <th>Genre</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Title</td>
+                <td>@item.Author</td>
+                <td>@item.ISBN</td>
+                <td>@item.PublishedYear</td>
+                <td>@item.Genre</td>
+                <td class="d-flex gap-1 flex-wrap">
+                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-warning">Edit</a>
+                    <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-danger">Delete</a>
+                    <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-info">View</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
