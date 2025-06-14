@@ -40,6 +40,13 @@
             <span asp-validation-for="Genre" class="text-danger"></span>
         </div>
 
+        <!-- ✅ Added Detail field -->
+        <div class="mb-3">
+            <label asp-for="Detail" class="form-label"></label>
+            <textarea asp-for="Detail" class="form-control" rows="4" placeholder="Enter additional book details"></textarea>
+            <span asp-validation-for="Detail" class="text-danger"></span>
+        </div>
+
         <div class="d-flex justify-content-between">
             <a asp-action="Index" class="btn btn-secondary">← Back to List</a>
             <button type="submit" class="btn btn-primary">Update Book</button>

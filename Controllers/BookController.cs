@@ -20,7 +20,6 @@ namespace LibraryBookManagement.Controllers
 
             var books = from b in _context.Books select b;
 
-            // Search by title or author
             if (!string.IsNullOrEmpty(searchString))
             {
                 books = books.Where(b =>
@@ -28,12 +27,11 @@ namespace LibraryBookManagement.Controllers
                     b.Author.ToLower().Contains(searchString.ToLower()));
             }
 
-            // Sort logic
             books = sortOrder switch
             {
                 "title" => books.OrderBy(b => b.Title),
                 "author" => books.OrderBy(b => b.Author),
-                _ => books.OrderByDescending(b => b.CreatedOn) // Recently Added default
+                _ => books.OrderByDescending(b => b.CreatedOn)
             };
 
             return View(await books.AsNoTracking().ToListAsync());
@@ -57,6 +55,16 @@ namespace LibraryBookManagement.Controllers
         {
             if (ModelState.IsValid)
             {
+                // 🔍 Check for duplicate title (case-insensitive)
+                bool exists = await _context.Books
+                    .AnyAsync(b => b.Title.ToLower() == book.Title.ToLower());
+
+                if (exists)
+                {
+                    ModelState.AddModelError("Title", "A book with this title already exists.");
+                    return View(book);
+                }
+
                 book.CreatedOn = DateTime.Now;
                 _context.Add(book);
                 await _context.SaveChangesAsync();
@@ -85,6 +93,16 @@ namespace LibraryBookManagement.Controllers
             {
                 try
                 {
+                    // 🔍 Check for duplicate title (case-insensitive) excluding current book
+                    bool exists = await _context.Books
+                        .AnyAsync(b => b.Title.ToLower() == book.Title.ToLower() && b.Id != book.Id);
+
+                    if (exists)
+                    {
+                        ModelState.AddModelError("Title", "A book with this title already exists.");
+                        return View(book);
+                    }
+
                     book.UpdatedOn = DateTime.Now;
                     _context.Update(book);
                     await _context.SaveChangesAsync();
